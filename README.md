@@ -162,7 +162,6 @@ func new --name EventPublisherFunction --template "HTTP trigger"
 
 ```powershell name=add-packages.ps1
 # add-packages.ps1
-Set-Location EventGridFunctionProj
 dotnet add package Azure.Messaging.EventGrid
 dotnet add package Azure.Storage.Queues
 ```
