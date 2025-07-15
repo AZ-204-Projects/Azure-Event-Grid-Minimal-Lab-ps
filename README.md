@@ -115,7 +115,7 @@ Use modular **`.ps1`** files for each step, loading a common `source.ps1` file f
 
 $RG_NAME      = "az-204-eventgrid-lab-rg"
 $LOCATION     = "westus"
-$STORAGE_NAME = "eventgridlabstorage2025071408"
+$STORAGE_NAME = "eventgridstorage0714am"
 $QUEUE_NAME   = "eventgridqueue"
 $TOPIC_NAME   = "topic-eventgrid-demo"
 
