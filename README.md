@@ -154,16 +154,37 @@ az storage queue create --name $QUEUE_NAME --account-name $STORAGE_NAME
 ```powershell name=init-function.ps1
 # init-function.ps1
 func init EventGridFunctionProj --worker-runtime dotnet --target-framework net8.0
-Set-Location EventGridFunctionProj
-func new --name EventPublisherFunction --template "HTTP trigger"
+
+$originalDir = Get-Location
+try {
+    Set-Location "$PSScriptRoot\EventGridFunctionProj"
+   func new --name EventPublisherFunction --template "HTTP trigger"
+}
+catch {
+    Write-Error "Script failed: $_"
+}
+finally {
+    Set-Location $originalDir
+}
 ```
 
 #### Create script to Add packages for Event Grid publishing (`add-packages.ps1`) and run it.
 
 ```powershell name=add-packages.ps1
 # add-packages.ps1
-dotnet add package Azure.Messaging.EventGrid
-dotnet add package Azure.Storage.Queues
+$originalDir = Get-Location
+try {
+    Set-Location "$PSScriptRoot\EventGridFunctionProj"
+   dotnet add package Azure.Messaging.EventGrid
+   dotnet add package Azure.Storage.Queues
+}
+catch {
+    Write-Error "Script failed: $_"
+}
+finally {
+     Set-Location $originalDir
+}
+
 ```
 
 #### Implement Function logic (.NET) to POST incoming payloads to Azure Storage Queue
@@ -253,12 +274,19 @@ az eventgrid event-subscription create `
 ```powershell name=deploy-function.ps1
 # deploy-function.ps1
 . .\source.ps1
+$originalDir = Get-Location
+try {
+    Set-Location "$PSScriptRoot\EventGridFunctionProj"
+    az functionapp create --resource-group $RG_NAME --consumption-plan-location $LOCATION --runtime dotnet --functions-version 4 --name "EventGridFunctionProj" --storage-account $STORAGE_NAME
 
-Set-Location EventGridFunctionProj
-
-az functionapp create --resource-group $RG_NAME --consumption-plan-location $LOCATION --runtime dotnet --functions-version 4 --name "EventGridFunctionProj" --storage-account $STORAGE_NAME
-
-func azure functionapp publish EventGridFunctionProj
+   func azure functionapp publish EventGridFunctionProj
+}
+catch {
+    Write-Error "Script failed: $_"
+}
+finally {
+     Set-Location $originalDir
+}
 ```
 
 ---
